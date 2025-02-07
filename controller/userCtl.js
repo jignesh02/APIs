@@ -1,4 +1,5 @@
-const userModel = require("../model/userModel")
+const userModel = require("../model/userModel");
+const path = require("path")
 
 module.exports.getUser = async (req, res) => {
     try {
@@ -15,6 +16,11 @@ module.exports.getUser = async (req, res) => {
 
 module.exports.addUser = async (req, res) => {
     try {
+        let image = "";
+        if (req.file) {
+            image = await userModel.pathOfImage + "/" + req.file.filename;
+        }
+        req.body.image = image;
         let addUserData = await userModel.create(req.body);
         if (addUserData) {
             return res.status(200).json({ msg: "User data inserted successfully", data: addUserData });
@@ -28,6 +34,18 @@ module.exports.addUser = async (req, res) => {
 
 module.exports.deleteUser = async (req, res) => {
     try {
+        let findUserData = await userModel.findById(req.params.id);
+        console.log(findUserData);
+        if (findUserData) {
+            try {
+                let deleteImgPath = path.join(__dirname, "..", findUserData.image);
+                await fs.unlinkSync(deleteImgPath);
+            }
+            catch (err) {
+                return res.status(400).json({ msg: "Something went wrong", error: err });
+            }
+        }
+
         let deleteUser = await userModel.findByIdAndDelete(req.params.id);
         if (deleteUser) {
             return res.status(200).json({ msg: "User data deleted successfully" });

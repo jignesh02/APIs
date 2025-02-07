@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = 8008;
 const db = require("./config/db");
+const path = require("path")
 
 const passport = require("passport");
 const jwtPassport = require("./config/passport-jwt-strategy");
@@ -20,6 +21,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use(express.urlencoded());
 app.use("/", require("./routes"));
 
