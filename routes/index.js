@@ -20,4 +20,6 @@ routes.put("/updateUserData/:id", passport.authenticate("jwt", { failureRedirect
 
 routes.use("/auth", require("./authRoutes"));
 
+routes.get("/statusChange", passport.authenticate("jwt", { failureRedirect: "/unAuth" }), userCtl.statusChange)
+
 module.exports = routes;
